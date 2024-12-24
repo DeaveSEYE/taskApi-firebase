@@ -1,8 +1,6 @@
 const express = require("express");
-const { getFirestore } = require("firebase-admin/firestore");
-
 const router = express.Router();
-const db = getFirestore();
+const db = require("../config/firebase");
 
 // Liste des tâches prédéfinies
 const predefinedTasks = [
