@@ -1,6 +1,8 @@
 const express = require("express");
+const taskController = require("../controllers/taskController");
+const categoryController = require("../controllers/categoryController");
+
 const router = express.Router();
-const db = require("../config/firebase");
 
 // Liste des tâches prédéfinies
 const predefinedTasks = [
@@ -75,29 +77,36 @@ router.get("/", (req, res) => {
 });
 
 // Route pour ajouter les tâches et leurs catégories
-router.get("/add", async (req, res) => {
+router.get("/add", async (req, res, next) => {
   try {
     const addedTasks = [];
     const addedCategories = new Set(); // Pour éviter les doublons dans les catégories
 
     for (const task of predefinedTasks) {
-      // Ajouter la tâche à la collection `tasks`
-      const taskRef = db.collection("tasks").doc();
-      await taskRef.set(task);
-      addedTasks.push({ id: taskRef.id, ...task });
+      // Ajouter la tâche
+      const createdTask = await taskController.createTask({ body: task });
+
+      // Ajouter la tâche à la liste des tâches ajoutées
+      addedTasks.push(createdTask);
 
       // Vérifier si la catégorie existe déjà
       if (!addedCategories.has(task.categorie)) {
-        const categoriesRef = db.collection("categories");
-        const snapshot = await categoriesRef
-          .where("categorie", "==", task.categorie)
-          .get();
+        const categories = await categoryController.getAllCategories(
+          req,
+          res,
+          next
+        );
+        const categoryExists = categories.some(
+          (cat) => cat.categorie === task.categorie
+        );
 
-        if (snapshot.empty) {
+        if (!categoryExists) {
           // Ajouter la catégorie si elle n'existe pas
-          await categoriesRef.add({
-            categorie: task.categorie,
-            color: task.categorieColor,
+          await categoryController.createCategory({
+            body: {
+              categorie: task.categorie,
+              categorieColor: task.categorieColor,
+            },
           });
         }
         addedCategories.add(task.categorie);
@@ -109,11 +118,7 @@ router.get("/add", async (req, res) => {
       tasks: addedTasks,
     });
   } catch (error) {
-    res.status(500).send({
-      error:
-        "Une erreur est survenue lors de l'ajout des tâches ou des catégories.",
-      details: error.message,
-    });
+    next(error);
   }
 });
 
