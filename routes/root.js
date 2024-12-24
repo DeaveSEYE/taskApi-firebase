@@ -109,13 +109,18 @@ router.get("/add", async (req, res) => {
           () => {}
         );
         const categoryExists = categories.some(
-          (cat) => cat.name === task.categorie
+          (cat) => cat.categorie === task.categorie
         );
 
         if (!categoryExists) {
           // Ajouter la catégorie si elle n'existe pas
           await categoryController.createCategory(
-            { body: { name: task.categorie, color: task.categorieColor } },
+            {
+              body: {
+                categorie: task.categorie,
+                categorieColor: task.categorieColor,
+              },
+            },
             {
               status: () => ({
                 json: (data) => data,
