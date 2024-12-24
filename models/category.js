@@ -21,6 +21,7 @@ const CategoryModel = {
       categorie,
       categorieColor: categorieColor || "",
       createdAt: new Date().toISOString(),
+      updatedAt: "",
     };
 
     const ref = await db.collection("categories").add(category);

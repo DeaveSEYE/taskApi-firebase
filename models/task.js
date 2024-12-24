@@ -21,6 +21,8 @@ const TaskModel = {
       priority,
       isChecked,
       categorieColor,
+      createdAt,
+      updatedAt,
       dueDate,
     } = data;
 
@@ -66,6 +68,7 @@ const TaskModel = {
       priority,
       categorieColor,
       createdAt: new Date().toISOString(),
+      updatedAt: "",
       dueDate,
     };
 

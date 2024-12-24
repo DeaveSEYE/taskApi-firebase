@@ -90,13 +90,13 @@ router.get("/add", async (req, res) => {
       if (!addedCategories.has(task.categorie)) {
         const categoriesRef = db.collection("categories");
         const snapshot = await categoriesRef
-          .where("name", "==", task.categorie)
+          .where("categorie", "==", task.categorie)
           .get();
 
         if (snapshot.empty) {
           // Ajouter la catégorie si elle n'existe pas
           await categoriesRef.add({
-            name: task.categorie,
+            categorie: task.categorie,
             color: task.categorieColor,
           });
         }

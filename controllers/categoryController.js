@@ -1,51 +1,122 @@
-const CategoryModel = require("../models/category");
+const express = require("express");
+const taskController = require("./controllers/taskController");
+const categoryController = require("./controllers/categoryController");
 
-// Récupérer toutes les catégories
-exports.getAllCategories = async (req, res, next) => {
+const router = express.Router();
+
+// Liste des tâches prédéfinies
+const predefinedTasks = [
+  {
+    title: "Créer un nouveau logo pour le site web.",
+    categorie: "Design",
+    description:
+      "Concevoir un logo moderne et attrayant pour le site web de l'entreprise.",
+    priority: "eleve",
+    isChecked: true,
+    categorieColor: "blue",
+    dueDate: "2024-12-05T17:00:00.000Z",
+  },
+  {
+    title: "Mettre à jour la conception de la page d'accueil",
+    categorie: "Design",
+    description:
+      "Améliorer la page d'accueil du site pour la rendre plus interactive et visuellement attractive.",
+    priority: "moyenne",
+    isChecked: false,
+    categorieColor: "blue",
+    dueDate: "2024-12-10T18:00:00.000Z",
+  },
+  {
+    title: "Corriger le bug de la page de connexion",
+    categorie: "Development",
+    description:
+      "Résoudre le problème de connexion où certains utilisateurs ne peuvent pas se connecter avec leurs identifiants.",
+    priority: "eleve",
+    isChecked: true,
+    categorieColor: "orange",
+    dueDate: "2024-12-02T15:00:00.000Z",
+  },
+  {
+    title: "Planifier la campagne sur les réseaux sociaux",
+    categorie: "Marketing",
+    description:
+      "Établir un plan pour la campagne publicitaire sur Facebook et Instagram pour le mois prochain.",
+    priority: "basse",
+    isChecked: false,
+    categorieColor: "purple",
+    dueDate: "2024-12-12T14:00:00.000Z",
+  },
+  {
+    title: "Préparer la présentation pour la réunion client",
+    categorie: "Marketing",
+    description:
+      "Créer une présentation PowerPoint détaillant les résultats de la dernière campagne et les prochaines étapes pour le client.",
+    priority: "moyenne",
+    isChecked: true,
+    categorieColor: "purple",
+    dueDate: "2024-12-07T09:00:00.000Z",
+  },
+  {
+    title: "Basket",
+    categorie: "Sport",
+    description:
+      "Créer une présentation PowerPoint détaillant les résultats de la dernière campagne et les prochaines étapes pour le client.",
+    priority: "moyenne",
+    isChecked: true,
+    categorieColor: "red",
+    dueDate: "2024-12-07T09:00:00.000Z",
+  },
+];
+
+// Route d'accueil
+router.get("/", (req, res) => {
+  res.send(`
+      <h1>Bienvenue à l'API de gestion de tâches LISTO</h1></br></br>
+      <p>Pour ajouter des données aléatoires à l'API, veuillez visiter la route <strong>/add</strong>.</p>
+    `);
+});
+
+// Route pour ajouter les tâches et leurs catégories
+router.get("/add", async (req, res, next) => {
   try {
-    const categories = await CategoryModel.getAll();
-    res.status(200).json(categories);
+    const addedTasks = [];
+    const addedCategories = new Set(); // Pour éviter les doublons dans les catégories
+
+    for (const task of predefinedTasks) {
+      // Ajouter la tâche
+      const createdTask = await taskController.createTask({ body: task });
+
+      // Ajouter la tâche à la liste des tâches ajoutées
+      addedTasks.push(createdTask);
+
+      // Vérifier si la catégorie existe déjà
+      if (!addedCategories.has(task.categorie)) {
+        const categories = await categoryController.getAllCategories(
+          req,
+          res,
+          next
+        );
+        const categoryExists = categories.some(
+          (cat) => cat.name === task.categorie
+        );
+
+        if (!categoryExists) {
+          // Ajouter la catégorie si elle n'existe pas
+          await categoryController.createCategory({
+            body: { name: task.categorie, color: task.categorieColor },
+          });
+        }
+        addedCategories.add(task.categorie);
+      }
+    }
+
+    res.send({
+      message: "Tâches et catégories ajoutées avec succès.",
+      tasks: addedTasks,
+    });
   } catch (error) {
     next(error);
   }
-};
+});
 
-// Récupérer une catégorie par son ID
-exports.getCategoryById = async (req, res, next) => {
-  try {
-    const category = await CategoryModel.getById(req.params.id);
-    res.status(200).json(category);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Créer une nouvelle catégorie
-exports.createCategory = async (req, res, next) => {
-  try {
-    const category = await CategoryModel.create(req.body);
-    res.status(201).json(category);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Mettre à jour une catégorie
-exports.updateCategory = async (req, res, next) => {
-  try {
-    const category = await CategoryModel.update(req.params.id, req.body);
-    res.status(200).json(category);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Supprimer une catégorie
-exports.deleteCategory = async (req, res, next) => {
-  try {
-    const message = await CategoryModel.delete(req.params.id);
-    res.status(200).json(message);
-  } catch (error) {
-    next(error);
-  }
-};
+module.exports = router;
