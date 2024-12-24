@@ -1,6 +1,6 @@
 const express = require("express");
-const taskController = require("../controllers/taskController");
-const categoryController = require("../controllers/categoryController");
+const taskController = require("./controllers/taskController");
+const categoryController = require("./controllers/categoryController");
 
 const router = express.Router();
 
@@ -77,14 +77,22 @@ router.get("/", (req, res) => {
 });
 
 // Route pour ajouter les tâches et leurs catégories
-router.get("/add", async (req, res, next) => {
+router.get("/add", async (req, res) => {
   try {
     const addedTasks = [];
     const addedCategories = new Set(); // Pour éviter les doublons dans les catégories
 
     for (const task of predefinedTasks) {
       // Ajouter la tâche
-      const createdTask = await taskController.createTask({ body: task });
+      const createdTask = await taskController.createTask(
+        { body: task },
+        {
+          status: () => ({
+            json: (data) => data,
+          }),
+        },
+        () => {}
+      );
 
       // Ajouter la tâche à la liste des tâches ajoutées
       addedTasks.push(createdTask);
@@ -93,21 +101,28 @@ router.get("/add", async (req, res, next) => {
       if (!addedCategories.has(task.categorie)) {
         const categories = await categoryController.getAllCategories(
           req,
-          res,
-          next
+          {
+            status: () => ({
+              json: (data) => data,
+            }),
+          },
+          () => {}
         );
         const categoryExists = categories.some(
-          (cat) => cat.categorie === task.categorie
+          (cat) => cat.name === task.categorie
         );
 
         if (!categoryExists) {
           // Ajouter la catégorie si elle n'existe pas
-          await categoryController.createCategory({
-            body: {
-              categorie: task.categorie,
-              categorieColor: task.categorieColor,
+          await categoryController.createCategory(
+            { body: { name: task.categorie, color: task.categorieColor } },
+            {
+              status: () => ({
+                json: (data) => data,
+              }),
             },
-          });
+            () => {}
+          );
         }
         addedCategories.add(task.categorie);
       }
@@ -118,7 +133,8 @@ router.get("/add", async (req, res, next) => {
       tasks: addedTasks,
     });
   } catch (error) {
-    next(error);
+    console.error("Erreur lors de l'ajout des données :", error);
+    res.status(500).json({ error: "Erreur lors de l'ajout des données." });
   }
 });
 
