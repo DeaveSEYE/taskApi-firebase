@@ -1,6 +1,6 @@
 const express = require("express");
-const taskController = require("./controllers/taskController");
-const categoryController = require("./controllers/categoryController");
+const taskController = require("../controllers/taskController");
+const categoryController = require("../controllers/categoryController");
 
 const router = express.Router();
 
