@@ -67,7 +67,38 @@ const predefinedTasks = [
     dueDate: "2024-12-07T09:00:00.000Z",
   },
 ];
-
+const predefinedCategories = [
+  {
+    categorie: "Defaut",
+    categorieColor: "grey",
+    createdAt: "2024-12-24T16:54:06.957Z",
+    updatedAt: "2024-12-24T16:54:06.957Z",
+  },
+  {
+    categorie: "Design",
+    categorieColor: "blue",
+    createdAt: "2024-12-24T16:54:07.035Z",
+    updatedAt: "2024-12-24T16:54:07.035Z",
+  },
+  {
+    categorie: "Development",
+    categorieColor: "orange",
+    createdAt: "2024-12-24T16:54:07.115Z",
+    updatedAt: "2024-12-24T16:54:07.116Z",
+  },
+  {
+    categorie: "Marketing",
+    categorieColor: "purple",
+    createdAt: "2024-12-24T16:54:07.180Z",
+    updatedAt: "2024-12-24T16:54:07.180Z",
+  },
+  {
+    categorie: "Marketing",
+    categorieColor: "purple",
+    createdAt: "2024-12-24T16:54:07.225Z",
+    updatedAt: "2024-12-24T16:54:07.225Z",
+  },
+];
 // Route d'accueil
 router.get("/", (req, res) => {
   res.send(`
@@ -80,27 +111,14 @@ router.get("/", (req, res) => {
 router.get("/add", async (req, res) => {
   try {
     const addedTasks = [];
-    const addedCategories = new Set(); // Pour éviter les doublons dans les catégories
+    const addedCategories = [];
 
+    // Ajouter les tâches prédéfinies
     for (const task of predefinedTasks) {
-      // Ajouter la tâche
-      const createdTask = await taskController.createTask(
-        { body: task },
-        {
-          status: () => ({
-            json: (data) => data,
-          }),
-        },
-        () => {}
-      );
-
-      // Ajouter la tâche à la liste des tâches ajoutées
-      addedTasks.push(createdTask);
-
-      // Vérifier si la catégorie existe déjà
-      if (!addedCategories.has(task.categorie)) {
-        const categories = await categoryController.getAllCategories(
-          req,
+      try {
+        console.log(`Ajout de la tâche: ${task.title}`);
+        const createdTask = await taskController.createTask(
+          { body: task },
           {
             status: () => ({
               json: (data) => data,
@@ -108,38 +126,49 @@ router.get("/add", async (req, res) => {
           },
           () => {}
         );
-        const categoryExists = categories.some(
-          (cat) => cat.categorie === task.categorie
+        addedTasks.push(createdTask);
+      } catch (taskError) {
+        console.error(
+          `Erreur lors de l'ajout de la tâche: ${task.title}`,
+          taskError
         );
-
-        if (!categoryExists) {
-          // Ajouter la catégorie si elle n'existe pas
-          await categoryController.createCategory(
-            {
-              body: {
-                categorie: task.categorie,
-                categorieColor: task.categorieColor,
-              },
-            },
-            {
-              status: () => ({
-                json: (data) => data,
-              }),
-            },
-            () => {}
-          );
-        }
-        addedCategories.add(task.categorie);
+        throw new Error("Erreur lors de l'ajout des tâches.");
       }
     }
 
+    // Ajouter les catégories prédéfinies
+    for (const category of predefinedCategories) {
+      try {
+        console.log(`Ajout de la catégorie: ${category.categorie}`);
+        const createdCategory = await categoryController.createCategory(
+          { body: category },
+          {
+            status: () => ({
+              json: (data) => data,
+            }),
+          },
+          () => {}
+        );
+        addedCategories.push(createdCategory);
+      } catch (categoryError) {
+        console.error(
+          `Erreur lors de l'ajout de la catégorie: ${category.categorie}`,
+          categoryError
+        );
+        throw new Error("Erreur lors de l'ajout des catégories.");
+      }
+    }
+
+    // Si tout a été ajouté avec succès
     res.send({
       message: "Tâches et catégories ajoutées avec succès.",
       tasks: addedTasks,
+      categories: addedCategories,
     });
   } catch (error) {
-    console.error("Erreur lors de l'ajout des données :", error);
-    res.status(500).json({ error: "Erreur lors de l'ajout des données." });
+    // Afficher un message d'erreur détaillé
+    console.error("Erreur générale lors de l'ajout des données:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
