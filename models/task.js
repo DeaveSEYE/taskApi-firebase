@@ -25,7 +25,7 @@ const TaskModel = {
     } = data;
 
     // Définition des valeurs autorisées pour `priority`
-    const validPriorities = ["basse", "moyenne", "elevee"];
+    const validPriorities = ["basse", "moyenne", "eleve"];
 
     // Validation des champs requis
     if (!title || typeof title !== "string")
@@ -80,7 +80,7 @@ const TaskModel = {
 
     // Validation des priorités si `priority` est fourni
     if (data.priority) {
-      const validPriorities = ["basse", "moyenne", "elevee"];
+      const validPriorities = ["basse", "moyenne", "eleve"];
       if (!validPriorities.includes(data.priority)) {
         throw new Error(
           `La priorité est invalide. Les valeurs autorisées sont : ${validPriorities.join(
