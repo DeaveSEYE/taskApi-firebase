@@ -1,8 +1,8 @@
 const express = require("express");
+const { getFirestore } = require("firebase-admin/firestore");
 
 const router = express.Router();
-const TaskModel = require("../models/task");
-const CategoryModel = require("../models/category");
+const db = getFirestore();
 
 // Liste des tâches prédéfinies
 const predefinedTasks = [
@@ -67,6 +67,7 @@ const predefinedTasks = [
     dueDate: "2024-12-07T09:00:00.000Z",
   },
 ];
+
 // Route d'accueil
 router.get("/", (req, res) => {
   res.send(`
@@ -74,6 +75,7 @@ router.get("/", (req, res) => {
       <p>Pour ajouter des données aléatoires à l'API, veuillez visiter la route <strong>/add</strong>.</p>
     `);
 });
+
 // Route pour ajouter les tâches et leurs catégories
 router.get("/add", async (req, res) => {
   try {
@@ -82,17 +84,20 @@ router.get("/add", async (req, res) => {
 
     for (const task of predefinedTasks) {
       // Ajouter la tâche à la collection `tasks`
-      const createdTask = await TaskModel.create(task);
-      addedTasks.push(createdTask);
+      const taskRef = db.collection("tasks").doc();
+      await taskRef.set(task);
+      addedTasks.push({ id: taskRef.id, ...task });
 
       // Vérifier si la catégorie existe déjà
       if (!addedCategories.has(task.categorie)) {
-        const existingCategory = await CategoryModel.findOne({
-          name: task.categorie,
-        });
-        if (!existingCategory) {
+        const categoriesRef = db.collection("categories");
+        const snapshot = await categoriesRef
+          .where("name", "==", task.categorie)
+          .get();
+
+        if (snapshot.empty) {
           // Ajouter la catégorie si elle n'existe pas
-          await CategoryModel.create({
+          await categoriesRef.add({
             name: task.categorie,
             color: task.categorieColor,
           });
