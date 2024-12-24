@@ -19,7 +19,7 @@ const CategoryModel = {
 
     const category = {
       categorie,
-      categorieColor: categorieColor || "",
+      categorieColor: categorieColor,
       createdAt: new Date().toISOString(),
       updatedAt: "",
     };
