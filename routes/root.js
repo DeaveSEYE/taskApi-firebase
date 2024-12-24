@@ -92,12 +92,6 @@ const predefinedCategories = [
     createdAt: "2024-12-24T16:54:07.180Z",
     updatedAt: "2024-12-24T16:54:07.180Z",
   },
-  {
-    categorie: "Marketing",
-    categorieColor: "purple",
-    createdAt: "2024-12-24T16:54:07.225Z",
-    updatedAt: "2024-12-24T16:54:07.225Z",
-  },
 ];
 // Route d'accueil
 router.get("/", (req, res) => {

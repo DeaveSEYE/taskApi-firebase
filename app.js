@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const errorHandler = require("./middlewares/errorHandler");
 
 const root = require("./routes/root");
@@ -8,6 +9,9 @@ const taskRoutes = require("./routes/taskRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 
 const app = express();
+
+// Utilisation de CORS pour permettre toutes les origines
+app.use(cors());
 
 // Middlewares
 app.use(bodyParser.json());
