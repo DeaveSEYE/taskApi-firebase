@@ -14,7 +14,7 @@ exports.deleteAllTasks = async (req, res) => {
     const tasks = await TaskModel.deleteAllTasks();
     res.status(200).json(tasks);
   } catch (error) {
-    res.error(error);
+    res.send(error);
   }
 };
 // Récupérer une tâche par son ID

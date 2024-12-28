@@ -1,12 +1,12 @@
 const CategoryModel = require("../models/category");
 
 // Récupérer toutes les catégories
-exports.getAllCategories = async (req, res, next) => {
+exports.getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.getAll();
     res.status(200).json(categories);
   } catch (error) {
-    next(error);
+    res.send(error);
   }
 };
 exports.deleteAllCategories = async (req, res, next) => {
