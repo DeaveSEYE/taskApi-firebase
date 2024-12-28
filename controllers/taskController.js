@@ -14,7 +14,6 @@ exports.deleteAllTasks = async (req, res) => {
     const tasks = await TaskModel.deleteAllTasks();
     res.status(200).json(tasks);
   } catch (error) {
-    next(error);
     res.error(error);
   }
 };
