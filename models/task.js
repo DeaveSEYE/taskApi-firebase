@@ -110,6 +110,26 @@ const TaskModel = {
     await ref.delete();
     return { message: `Tâche avec l'id ${id} supprimée avec succès` };
   },
+  async deleteAllTasks() {
+    const ref = db.collection("tasks");
+    const snapshot = await ref.get();
+
+    // Si la collection est vide, renvoyer un message
+    if (snapshot.empty) {
+      throw new Error("Aucune tâche trouvée à supprimer");
+    }
+
+    // Supprimer chaque document dans la collection
+    const batch = db.batch(); // Utilisation de `batch` pour des suppressions en bloc
+    snapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Exécuter le batch pour supprimer tous les documents
+    await batch.commit();
+
+    return { message: "Toutes les tâches ont été supprimées avec succès" };
+  },
 };
 
 module.exports = TaskModel;

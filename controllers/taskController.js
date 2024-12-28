@@ -9,7 +9,14 @@ exports.getAllTasks = async (req, res, next) => {
     next(error);
   }
 };
-
+exports.deleteAllTasks = async (req, res, next) => {
+  try {
+    const tasks = await TaskModel.deleteAllTasks();
+    res.status(200).json(tasks);
+  } catch (error) {
+    next(error);
+  }
+};
 // Récupérer une tâche par son ID
 exports.getTaskById = async (req, res, next) => {
   try {

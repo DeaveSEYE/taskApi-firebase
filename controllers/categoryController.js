@@ -9,7 +9,14 @@ exports.getAllCategories = async (req, res, next) => {
     next(error);
   }
 };
-
+exports.deleteAllCategories = async (req, res, next) => {
+  try {
+    const categories = await CategoryModel.deleteAllCategories();
+    res.status(200).json(categories);
+  } catch (error) {
+    next(error);
+  }
+};
 // Récupérer une catégorie par son ID
 exports.getCategoryById = async (req, res, next) => {
   try {

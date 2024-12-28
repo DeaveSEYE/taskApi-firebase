@@ -50,6 +50,26 @@ const CategoryModel = {
     await ref.delete();
     return { message: `Categorie avec l'id ${id} supprimée avec success` };
   },
+  async deleteAllCategories() {
+    const categoriesRef = db.collection("categories");
+    const categoriesSnapshot = await categoriesRef.get();
+
+    // Si la collection est vide, renvoyer un message
+    if (categoriesSnapshot.empty) {
+      throw new Error("Aucune Categorie trouvée à supprimer");
+    }
+
+    // Supprimer chaque document dans la collection
+    const batch = db.batch(); // Utilisation de `batch` pour des suppressions en bloc
+    categoriesSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Exécuter le batch pour supprimer tous les documents
+    await batch.commit();
+
+    return { message: "Toutes les categories ont été supprimées avec succès" };
+  },
 };
 
 module.exports = CategoryModel;
