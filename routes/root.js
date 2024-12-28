@@ -209,11 +209,11 @@ router.get("/deleteAll", async (req, res) => {
 
     // Suppression des tâches
     const deleteTasks = await taskController.deleteAllTasks();
-    console.log(deleteTasks.message); // Vous pouvez logguer ou utiliser les informations de la réponse
+    // console.log(deleteTasks.message); // Vous pouvez logguer ou utiliser les informations de la réponse
 
     // Suppression des catégories
     const deleteCategories = await categoryController.deleteAllCategories();
-    console.log(deleteCategories.message); // Vous pouvez logguer ou utiliser les informations de la réponse
+    // console.log(deleteCategories.message); // Vous pouvez logguer ou utiliser les informations de la réponse
 
     // Réponse après les suppressions
     res.send({
