@@ -6,7 +6,7 @@ exports.getAllCategories = async (req, res) => {
     const categories = await CategoryModel.getAll();
     res.status(200).json(categories);
   } catch (error) {
-    res.send(error);
+    res.status(500).send(error); // Deuxième réponse envoyée
   }
 };
 exports.deleteAllCategories = async (req, res, next) => {
