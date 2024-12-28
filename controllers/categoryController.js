@@ -14,7 +14,7 @@ exports.deleteAllCategories = async (req, res) => {
     const categories = await CategoryModel.deleteAllCategories();
     res.json(categories);
   } catch (error) {
-    res.json(error);
+    // res.json(error);
   }
 };
 // Récupérer une catégorie par son ID
