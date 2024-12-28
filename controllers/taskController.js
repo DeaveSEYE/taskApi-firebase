@@ -12,9 +12,9 @@ exports.getAllTasks = async (req, res, next) => {
 exports.deleteAllTasks = async (req, res) => {
   try {
     const tasks = await TaskModel.deleteAllTasks();
-    res.status(200).json(tasks);
+    res.json(tasks);
   } catch (error) {
-    res.status(500).send(error); // Deuxième réponse envoyée
+    res.send(error); // Deuxième réponse envoyée
   }
 };
 // Récupérer une tâche par son ID

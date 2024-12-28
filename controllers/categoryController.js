@@ -4,9 +4,9 @@ const CategoryModel = require("../models/category");
 exports.getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.getAll();
-    res.status(200).json(categories);
+    res.json(categories);
   } catch (error) {
-    res.status(500).send(error); // Deuxième réponse envoyée
+    res.send(error); // Deuxième réponse envoyée
   }
 };
 exports.deleteAllCategories = async (req, res, next) => {
