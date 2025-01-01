@@ -15,6 +15,7 @@ const TaskModel = {
 
   async create(data) {
     const {
+      userId,
       title,
       categorie,
       description,
@@ -34,6 +35,8 @@ const TaskModel = {
       throw new Error(
         "Le titre est requis et doit être une chaîne de caractères."
       );
+    if (!userId || typeof userId !== "string")
+      throw new Error("userId est requis.");
     if (!categorie || typeof categorie !== "string")
       throw new Error(
         "La catégorie est requise et doit être une chaîne de caractères."
@@ -61,6 +64,7 @@ const TaskModel = {
 
     // Création de la tâche
     const task = {
+      userId,
       title,
       categorie,
       description,

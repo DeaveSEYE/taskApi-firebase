@@ -22,7 +22,7 @@ router.post(
       .notEmpty()
       .withMessage("categorieColor is required"),
     check("dueDate").notEmpty().withMessage("dueDate is required"),
-    // check("userId").notEmpty().withMessage("User ID is required"),
+    check("userId").notEmpty().withMessage("User ID is required"),
   ],
   taskController.createTask
 );

@@ -13,11 +13,13 @@ const CategoryModel = {
     return { id: doc.id, ...doc.data() };
   },
   async create(data) {
-    const { categorie, categorieColor } = data;
+    const { categorie, categorieColor, userId } = data;
+    if (!userId) throw new Error("userId is required");
     if (!categorie) throw new Error("categorie name is required");
     if (!categorieColor) throw new Error("categorieColor  is required");
 
     const category = {
+      userId,
       categorie,
       categorieColor: categorieColor,
       createdAt: new Date().toISOString(),

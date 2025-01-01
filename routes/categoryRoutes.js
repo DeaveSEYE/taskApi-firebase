@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/", categoryController.getAllCategories);
 router.post(
   "/",
+  [check("userId").notEmpty().withMessage("userId is required")],
   [check("categorie").notEmpty().withMessage("Category name is required")],
   [check("categorieColor").notEmpty().withMessage("Category name is required")],
   [check("createdAt").notEmpty().withMessage("Category name is required")],
