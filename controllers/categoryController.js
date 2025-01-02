@@ -9,6 +9,15 @@ exports.getAllCategories = async (req, res, next) => {
     next(error);
   }
 };
+exports.getCategoriesByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const categories = await CategoryModel.getCategoriesByUserId(userId);
+    res.status(200).json(categories);
+  } catch (error) {
+    next(error);
+  }
+};
 exports.deleteAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.deleteAllCategories();

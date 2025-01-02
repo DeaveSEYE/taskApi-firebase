@@ -10,6 +10,7 @@ const router = express.Router();
 // }
 // Routes CRUD pour les tâches
 router.get("/", taskController.getAllTasks);
+router.get("/:userId", taskController.getTasksByUserId);
 router.post(
   "/",
   [

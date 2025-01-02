@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Routes CRUD pour les catégories
 router.get("/", categoryController.getAllCategories);
+router.get("/:userId", categoryController.getCategoriesByUserId);
 router.post(
   "/",
   [check("userId").notEmpty().withMessage("userId is required")],

@@ -6,7 +6,13 @@ const TaskModel = {
     const snapshot = await db.collection("tasks").get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   },
-
+  async getTasksByUserId(userId) {
+    const snapshot = await db
+      .collection("tasks")
+      .where("userId", "==", userId)
+      .get();
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  },
   async getById(id) {
     const doc = await db.collection("tasks").doc(id).get();
     if (!doc.exists) throw new Error("Tâche non trouvée");

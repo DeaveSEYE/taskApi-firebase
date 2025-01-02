@@ -9,6 +9,15 @@ exports.getAllTasks = async (req, res, next) => {
     next(error);
   }
 };
+exports.getTasksByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const tasks = await TaskModel.getTasksByUserId(userId);
+    res.status(200).json(tasks);
+  } catch (error) {
+    next(error);
+  }
+};
 exports.deleteAllTasks = async (req, res) => {
   try {
     const tasks = await TaskModel.deleteAllTasks();

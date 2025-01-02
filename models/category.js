@@ -6,7 +6,13 @@ const CategoryModel = {
     const snapshot = await db.collection("categories").get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   },
-
+  async getCategoriesByUserId(userId) {
+    const snapshot = await db
+      .collection("categories")
+      .where("userId", "==", userId)
+      .get();
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  },
   async getById(id) {
     const doc = await db.collection("categories").doc(id).get();
     if (!doc.exists) throw new Error("categorie non trouvée");
