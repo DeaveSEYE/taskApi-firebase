@@ -15,14 +15,17 @@ const UserModel = {
 
   async create(data) {
     // const { user, email, password, role } = data;
-    const { user, email, password } = data;
-    if (!user || !email || !password)
-      throw new Error("user ,email and password are required");
+    const { user, email, password, auth } = data;
+    if (!user || !email) throw new Error("user and email are required");
+
+    if (auth.source === "normal" && !auth.password)
+      throw new Error(" password is required");
 
     const userData = {
       user,
       email,
       password,
+      auth,
       // role: role || "user",
       createdAt: new Date().toISOString(),
     };
