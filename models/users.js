@@ -18,7 +18,7 @@ const UserModel = {
     const { user, email, password, auth } = data;
     if (!user || !email) throw new Error("user and email are required");
 
-    if (auth.source === "normal" && !auth.password)
+    if (auth.source === "normal" && !password)
       throw new Error(" password is required");
 
     const userData = {
