@@ -12,10 +12,11 @@ const UserModel = {
     if (!doc.exists) throw new Error("User not found");
     return { id: doc.id, ...doc.data() };
   },
-
+  // DONNE INSCRIPTION NORMAL
+  // {user: vdhhdh, email: hdyhd@jdjd.ueue, password: $2a$10$OKTvbTY/yUVvwI1/OEoVL.2GKmoL09EkoNmV66stSQfLAfO12vMB2, auth: {source: normal, id: , photoUrl: }}
   async create(data) {
     // const { user, email, password, role } = data;
-    const { user, email, password, auth } = data;
+    const { user, email, password, firebaseCloudMessagingToken, auth } = data;
     if (!user || !email) throw new Error("user and email are required");
 
     if (auth.source === "normal" && !password)
@@ -25,6 +26,7 @@ const UserModel = {
       user,
       email,
       password,
+      firebaseCloudMessagingToken,
       auth,
       // role: role || "user",
       createdAt: new Date().toISOString(),
